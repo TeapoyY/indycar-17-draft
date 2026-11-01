@@ -1,11 +1,11 @@
-# 🏎️ 17-0: IndyCar Draft — Can You Go Undefeated?
+# 🏎 17-0: IndyCar Draft — Can You Go Undefeated?
 
 > **Draft 5 IndyCar legends across 6 eras and try to win every race in a 17-race IndyCar season.**
 > 84 legends. 6 eras. 17 races. 1 goal: 17-0.
 
 A 1-day HTML MVP sports-draft game, in the lineage of:
 - 🏆 [**38-0 Football Squad Draft**](https://github.com/TeapoyY/squad-draft-football) — NFL X-0 (2026-07-30)
-- 🏎️ [**F1 24-0**](https://github.com/TeapoyY/squad-draft-football) — F1 X-0 (2026-08-01)
+- 🏎 [**F1 24-0**](https://github.com/TeapoyY/squad-draft-football) — F1 X-0 (2026-08-01)
 - 🏁 [**36-0 NASCAR Cup Draft**](https://github.com/TeapoyY/nascar-36-draft) — NASCAR X-0 (2026-08-17)
 - 🚛 [**24-0 NASCAR Truck Draft**](https://github.com/TeapoyY/nascar-truck-24-draft) — NASCAR Truck X-0 (2026-08-21)
 - 🎮 [**PixelGP**](https://github.com/TeapoyY/app-pixelgp-web) — Turn-based racing + cards (2026-06-25)
@@ -19,7 +19,7 @@ A 1-day HTML MVP sports-draft game, in the lineage of:
 4. **Simulate race-by-race** — win/lose is determined by OVR + track-type + variance
 5. **Crown a champion** — go 17-0 or fall short
 
-## 🏟️ IndyCar Track Types
+## 🏟 IndyCar Track Types
 
 IndyCar has 3 distinct disciplines — the best drivers must master all:
 - **Oval (5 races)**: Indianapolis 500, Iowa, Gateway, Milwaukee, Nashville — pack racing + drafting
@@ -61,7 +61,7 @@ To go undefeated, you need:
 
 The best rosters can pick 4× OVR 99 legends + 1× era-synergized teammate for +1.5 OVR → 100+ effective OVR. But 17 races means **a single P3 finish breaks your perfect season**.
 
-## 🛠️ Tech
+## 🛠 Tech
 
 - **0 dependencies**, single HTML file (~38KB)
 - **Vanilla JS** with **mulberry32 seeded RNG** for replayability

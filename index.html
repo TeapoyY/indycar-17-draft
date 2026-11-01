@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0a0e14">
-<title>🏎️ 17-0: IndyCar Draft — Can You Go Undefeated?</title>
+<title>🏎 17-0: IndyCar Draft — Can You Go Undefeated?</title>
 <meta name="description" content="Draft legendary IndyCar drivers across the eras and try to win every race in a 17-race IndyCar season. 84 legends. 6 eras. 17 races. 1 goal: 17-0.">
 <style>
   :root {
@@ -21,6 +21,7 @@
     --gold: #fbbf24;
     --shadow: 0 4px 20px rgba(0,0,0,0.4);
   }
+  [hidden] { display: none !important; }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
     background: var(--bg);
@@ -150,6 +151,16 @@
     transition: all 0.15s;
     position: relative;
     user-select: none;
+  }
+  button.driver-card {
+    color: var(--text);
+    font: inherit;
+    text-align: left;
+  }
+  button.driver-card.drafted { color: #000; }
+  button.roster-chip {
+    border: 0;
+    font-family: inherit;
   }
   .driver-card:hover:not(.drafted):not(.disabled) {
     border-color: var(--accent);
@@ -455,7 +466,7 @@
 <body>
 <div class="wrap">
   <header>
-    <h1>🏎️ 17-0: IndyCar Draft</h1>
+    <h1>🏎 17-0: IndyCar Draft</h1>
     <div class="tagline">Draft legends. Race 17. Win all. Crown a champion.</div>
   </header>
 
@@ -546,7 +557,7 @@
   </div>
 
   <div class="footer">
-    Made for 🏎️ IndyCar fans · 84 legends · 6 eras · 1 dream<br>
+    Made for 🏎 IndyCar fans · 84 legends · 6 eras · 1 dream<br>
     A tribute to <a href="https://github.com/TeapoyY/squad-draft-football" style="color:var(--accent);">38-0</a> & <a href="https://github.com/TeapoyY/app-pixelgp-web" style="color:var(--accent);">24-0</a> drafting lineage.
   </div>
 </div>
@@ -669,21 +680,21 @@ const DRIVERS = [
 ];
 
 const ERA_NAMES = {
-    1: "1970s",
-    2: "1980s",
-    3: "1990s",
-    4: "2000s",
-    5: "2010s",
-    6: "2020s"
+    1: "1980s",
+    2: "1990s",
+    3: "2000s",
+    4: "2010s",
+    5: "2020s",
+    6: "2026"
 };
 
 const ERA_LABELS = {
-    1: "70s",
-    2: "80s",
-    3: "90s",
-    4: "00s",
-    5: "10s",
-    6: "20s"
+    1: "80s",
+    2: "90s",
+    3: "00s",
+    4: "10s",
+    5: "20s",
+    6: "2026"
 };
 
 // Realistic 2026 IndyCar Series schedule (17 races)
@@ -787,23 +798,10 @@ function simulateRace(playerOVR, raceType, rng) {
     return { playerPos, field };
 }
 
-// --- POINTS CALCULATION (Modern IndyCar: 50-1 system, double points at Indy 500) ---
+// --- POINTS CALCULATION (Modern IndyCar finishing points) ---
 function pointsForPos(pos, raceIdx) {
-    // Indy 500 (race #5) awards double points
-    const multiplier = (raceIdx === 4) ? 2 : 1;
-    // Base: Win=50, P2=40, P3=35, P4=32, P5=30
-    // P6-10: 28-20, P11-20: 19-10, P21+: 9-1
-    let pts;
-    if (pos === 1) pts = 50;
-    else if (pos === 2) pts = 40;
-    else if (pos === 3) pts = 35;
-    else if (pos === 4) pts = 32;
-    else if (pos === 5) pts = 30;
-    else if (pos <= 10) pts = 28 - (pos - 6) * 2;
-    else if (pos <= 15) pts = 19 - (pos - 11) * 2;
-    else if (pos <= 20) pts = 12 - (pos - 16);
-    else pts = Math.max(1, 8 - Math.floor((pos - 21) / 2));
-    return pts * multiplier;
+    const top10 = [50, 40, 35, 32, 30, 28, 26, 24, 22, 20];
+    return pos <= 10 ? top10[pos - 1] : Math.max(5, 30 - pos);
 }
 
 // --- UI HELPERS ---
@@ -843,7 +841,9 @@ function renderDrivers() {
     const drivers = DRIVERS.filter(d => d.era === state.selectedEra);
     drivers.forEach(d => {
         const drafted = state.drafted.some(x => x.id === d.id);
-        const card = document.createElement('div');
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.disabled = drafted;
         card.className = 'driver-card' + (drafted ? ' drafted' : '');
         card.innerHTML = `
             <div class="ovr">${d.ovr}</div>
@@ -889,12 +889,12 @@ function updateDraftUI() {
         countText.textContent = 'Pick 5 IndyCar legends';
         helpText.textContent = 'Tap a driver to draft. Mix eras for synergy bonuses.';
         status.classList.remove('full');
-    } else if (n < 6) {
+    } else if (n < 5) {
         countText.textContent = `${n}/5 drivers drafted`;
-        helpText.textContent = `Pick ${6 - n} more. Avg OVR: ${$('stat-avg').textContent}`;
+        helpText.textContent = `Pick ${5 - n} more. Avg OVR: ${$('stat-avg').textContent}`;
         status.classList.remove('full');
     } else {
-        countText.textContent = '🏎️ Roster Complete!';
+        countText.textContent = '🏎 Roster Complete!';
         helpText.textContent = `Avg OVR: ${$('stat-avg').textContent} (incl +${eraSynergy(state.drafted).toFixed(1)} era synergy)`;
         status.classList.add('full');
     }
@@ -907,7 +907,9 @@ function updateDraftUI() {
         rosterDiv.className = 'roster';
         rosterDiv.style.marginTop = '10px';
         state.drafted.forEach(d => {
-            const chip = document.createElement('span');
+            const chip = document.createElement('button');
+            chip.type = 'button';
+            chip.setAttribute('aria-label', `Remove ${d.name}`);
             chip.className = 'roster-chip';
             chip.textContent = `${d.name} ${d.ovr}`;
             chip.onclick = () => undraftDriver(d.id);
@@ -918,7 +920,7 @@ function updateDraftUI() {
         status.appendChild(rosterDiv);
     }
 
-    $('start-btn').disabled = n !== 6;
+    $('start-btn').disabled = n !== 5;
 }
 
 // --- RESET ---
@@ -930,7 +932,7 @@ $('reset-btn').onclick = () => {
 
 // --- START SEASON ---
 $('start-btn').onclick = () => {
-    // Pick highest-OVR drafted driver as primary; pool all 6 for variation
+    // Pick highest-OVR drafted driver as primary; pool all 5 for variation
     state.seed = Date.now();
     state.rng = mulberry32(state.seed);
     state.season = {
@@ -946,6 +948,9 @@ $('start-btn').onclick = () => {
     state.season.standings[state.season.primaryDriver.id] = 0;
     state.drafted.forEach(d => state.season.standings[d.id] = 0);
 
+    $('season-wins').textContent = '0';
+    $('season-streak').textContent = '0';
+    $('season-points').textContent = '0';
     switchScreen('season');
     $('race-counter').textContent = '1';
     $('race-counter-end') && ($('race-counter-end').textContent = '1');
@@ -971,7 +976,7 @@ function showNextRace() {
 $('race-btn').onclick = () => {
     const i = state.season.results.length;
     const race = SCHEDULE[i];
-    // Player uses best drafted driver as primary; pool of 6 allows occasional rotation
+    // Player uses best drafted driver as primary; pool of 5 allows occasional rotation
     // For simplicity: use primary driver for entire season
     const playerOVR = state.season.primaryDriver.ovr + eraSynergy(state.season.allDrafted);
     const result = simulateRace(playerOVR, race.type, state.rng);
@@ -1065,8 +1070,8 @@ function showFinale() {
     let title = '';
     if (wins === 17) title = '🏆 UNDEFEATED — 17-0 LEGEND!';
     else if (wins >= 13) title = `🏆 ELITE — ${wins} wins / 17`;
-    else if (wins >= 10) title = `🏎️ STRONG — ${wins} wins / 17`;
-    else if (wins >= 6) title = `🏎️ CHAMPIONSHIP BID — ${wins} wins / 17`;
+    else if (wins >= 10) title = `🏎 STRONG — ${wins} wins / 17`;
+    else if (wins >= 6) title = `🏎 CHAMPIONSHIP BID — ${wins} wins / 17`;
     else title = `${wins} wins / 17 — Try a stronger roster next time`;
     $('finale-title').textContent = title;
 
@@ -1113,7 +1118,7 @@ $('replay-btn').onclick = () => {
 };
 
 $('share-btn').onclick = () => {
-    const text = `🏎️ My IndyCar 17-0 season: ${$('share-record').textContent}\n` +
+    const text = `🏎 My IndyCar 17-0 season: ${$('share-record').textContent}\n` +
                  `Driver: ${state.season.primaryDriver.name} (OVR ${state.season.primaryDriver.ovr})\n` +
                  `Best Streak: ${state.season.bestStreak}\n` +
                  `#IndyCar17Zero #UndefeatedSeason`;
